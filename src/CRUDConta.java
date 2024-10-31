@@ -62,13 +62,13 @@ public class CRUDConta {
         throw new ContaInexistenteException(); // lançamento de exception para quando n faz sentido retornar lista vazia
     }
 
-    public void update(int id, Conta conta) {
+    public void update(Conta conta) {
         try (Connection con = db.getConnection()) {
             PreparedStatement ps = con.prepareStatement("UPDATE tb_conta SET titular = ?, saldo = ?, limite = ? WHERE numero = ?");
             ps.setString(1, conta.getTitular());
             ps.setDouble(2, conta.getSaldo());
             ps.setDouble(3, conta.getLimite());
-            ps.setInt(4, id);
+            ps.setInt(4, conta.getNumero());
             ps.execute();
         } catch (SQLException e) {
             System.err.println(e.getMessage());

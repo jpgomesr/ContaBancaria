@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Executavel {
     private static Scanner sc = new Scanner(System.in);
-    private static BancoDeDados db = new BancoDeDados();
+    private static CRUDConta db = new CRUDConta();
 
     public static void main(String[] args) {
         do {
@@ -22,13 +22,13 @@ public class Executavel {
         System.out.print("Número da Conta: ");
         int numero = sc.nextInt();
         try {
-            db.buscarConta(numero);
+            db.readOne(numero);
         } catch (ContaInexistenteException e) {
             System.out.print("Titular: ");
             String titular = sc.next();
             System.out.print("Limite: ");
             double limite = sc.nextDouble();
-            db.inserirConta(new Conta(numero, titular, limite));
+            db.create(new Conta(numero, titular, limite));
             return;
         }
         throw new ContaJaCadastradaException();
@@ -36,7 +36,7 @@ public class Executavel {
 
     private static void removeConta() {
         Conta conta = buscaConta();
-        db.deletarConta(conta);
+        db.delete(conta.getNumero());
     }
 
     private static void editaConta() {
@@ -51,10 +51,10 @@ public class Executavel {
     }
 
     private static Conta buscaConta() {
-        System.out.println(db.buscarContas());
+        System.out.println(db.readAll());
         System.out.print("Numero da Conta: ");
         int numero = sc.nextInt();
-        return db.buscarConta(numero);
+        return db.readOne(numero);
     }
 
     private static void mostrarOpcoesMenu() {
@@ -96,7 +96,7 @@ public class Executavel {
                 removeConta();
                 break;
             case 4:
-                System.out.println(db.buscarContas());
+                System.out.println(db.readAll());
                 break;
             case 5:
                 int opcaoConta = 0;
