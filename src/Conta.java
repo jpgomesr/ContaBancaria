@@ -1,13 +1,15 @@
+import Exceptions.*;
+
 public class Conta {
     private int numero;
     private String titular;
     private double saldo;
     private double limite;
 
-//    public Conta(int numero, String titular, double saldo, double limite) {
-//        this(numero, titular, limite);
-//        this.saldo = saldo;
-//    }
+    public Conta(int numero, String titular, double saldo, double limite) {
+        this(numero, titular, limite);
+        this.saldo = saldo;
+    }
 
     public Conta(int numero, String titular, double limite) {
         this.numero = numero;
@@ -18,6 +20,14 @@ public class Conta {
 
     public double getSaldo() {
         return saldo;
+    }
+
+    public String getTitular() {
+        return titular;
+    }
+
+    public double getLimite() {
+        return limite;
     }
 
     public void saque(double valor)

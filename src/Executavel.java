@@ -1,3 +1,5 @@
+import Exceptions.*;
+
 import java.util.Scanner;
 
 public class Executavel {

@@ -1,3 +1,5 @@
+package Exceptions;
+
 public class ContaJaCadastradaException extends ContaException {
 
     public ContaJaCadastradaException() {

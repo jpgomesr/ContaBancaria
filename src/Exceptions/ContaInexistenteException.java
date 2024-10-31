@@ -1,3 +1,5 @@
+package Exceptions;
+
 public class ContaInexistenteException extends ContaException {
 
     public ContaInexistenteException() {
