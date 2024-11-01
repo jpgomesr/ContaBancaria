@@ -5,6 +5,7 @@ public class Conta {
     private String titular;
     private double saldo;
     private double limite;
+    private CRUDConta db = new CRUDConta();
 
     public Conta(int numero, String titular, double saldo, double limite) {
         this(numero, titular, limite);
@@ -36,13 +37,17 @@ public class Conta {
         validaValor(valor);
         validaSaldo(valor);
         validaLimite(valor);
-        this.saldo -= valor;
+        Conta c = db.readOne(this.getNumero());
+        c.saldo -= valor;
+        db.update(c);
     }
 
     public void deposito(double valor)
             throws ValorInvalidoException {
         validaValor(valor);
-        this.saldo += valor;
+        Conta c = db.readOne(this.getNumero());
+        c.saldo += valor;
+        db.update(c);
     }
 
     public void transferencia(double valor, Conta conta)
@@ -50,8 +55,11 @@ public class Conta {
             ValorInvalidoException, SaldoInsuficienteException,
             LimiteInsuficienteException {
         validaConta(conta);
-        this.saque(valor);
+        Conta c = db.readOne(this.getNumero());
+        c.saque(valor);
+        db.update(c);
         conta.deposito(valor);
+        db.update(conta);
     }
 
     private void validaValor(double valor) throws ValorInvalidoException {

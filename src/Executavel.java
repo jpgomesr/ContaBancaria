@@ -147,7 +147,7 @@ public class Executavel {
                 break;
             }
             case 4: {
-                System.out.println("Saldo: R$ " + conta.getSaldo());
+                System.out.println("Saldo: R$ " + db.readOne(1).getSaldo());
                 break;
             }
             case 5: {
