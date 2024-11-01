@@ -25,6 +25,22 @@ public class CRUDConta {
         }
     }
 
+    public void createHistorico(int remetente, int destinatario, double valor) {
+        try (Connection con = db.getConnection()) {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO tb_historico (remetente, destinatario, valor, data_transacao) " +
+                    "VALUES (?, ?, ?, ?)");
+            java.util.Date data = new java.util.Date();
+            java.sql.Timestamp dataTimestamp = new java.sql.Timestamp(data.getTime());
+            ps.setInt(1, remetente);
+            ps.setInt(2, destinatario);
+            ps.setDouble(3, valor);
+            ps.setTimestamp(4, dataTimestamp);
+            ps.execute();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     public Conta readOne(int id) {
         try (Connection con = db.getConnection()) {
             PreparedStatement ps = con.prepareStatement("SELECT * FROM tb_conta WHERE numero = ?");

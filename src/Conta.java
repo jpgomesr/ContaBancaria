@@ -55,11 +55,10 @@ public class Conta {
             ValorInvalidoException, SaldoInsuficienteException,
             LimiteInsuficienteException {
         validaConta(conta);
-        Conta c = db.readOne(this.getNumero());
-        c.saque(valor);
-        db.update(c);
+        Conta contaPropria = db.readOne(this.getNumero());
+        contaPropria.saque(valor);
         conta.deposito(valor);
-        db.update(conta);
+        db.createHistorico(this.getNumero(), conta.getNumero(), valor);
     }
 
     private void validaValor(double valor) throws ValorInvalidoException {
@@ -69,13 +68,13 @@ public class Conta {
     }
 
     private void validaSaldo(double valor) throws SaldoInsuficienteException {
-        if (this.saldo < valor) {
+        if (db.readOne(this.numero).getSaldo() < valor) {
             throw new SaldoInsuficienteException();
         }
     }
 
     private void validaLimite(double valor) throws LimiteInsuficienteException {
-        if (this.limite < valor) {
+        if (db.readOne(this.numero).getLimite() < valor) {
             throw new LimiteInsuficienteException();
         }
     }
@@ -86,13 +85,13 @@ public class Conta {
     }
 
     private void validaContaNula(Conta conta) throws ContaInexistenteException {
-        if (conta == null) {
+        if (db.readOne(conta.getNumero()) == null) {
             throw new ContaInexistenteException();
         }
     }
 
     private void validaContaPropria(Conta conta) throws PropriaContaException {
-        if (this == conta) {
+        if (this.getNumero() == conta.getNumero()) {
             throw new PropriaContaException();
         }
     }
