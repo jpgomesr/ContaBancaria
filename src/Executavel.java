@@ -3,8 +3,8 @@ import Exceptions.*;
 import java.util.Scanner;
 
 public class Executavel {
-    private static Scanner sc = new Scanner(System.in);
-    private static CRUDConta db = new CRUDConta();
+    private static final Scanner sc = new Scanner(System.in);
+    private static final CRUDConta db = new CRUDConta();
 
     public static void main(String[] args) {
         do {
@@ -47,7 +47,7 @@ public class Executavel {
         double limite = sc.nextDouble();
         conta.setTitular(titular);
         conta.setLimite(limite);
-//        db.atualizarConta(conta);
+        db.update(conta);
     }
 
     private static Conta buscaConta() {

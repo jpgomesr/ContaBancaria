@@ -5,7 +5,8 @@ public class Conta {
     private String titular;
     private double saldo;
     private double limite;
-    private CRUDConta db = new CRUDConta();
+    private CRUDConta dbConta = new CRUDConta();
+    private CRUDHistorico dbContaHistorico = new CRUDHistorico();
 
     public Conta(int numero, String titular, double saldo, double limite) {
         this(numero, titular, limite);
@@ -37,17 +38,17 @@ public class Conta {
         validaValor(valor);
         validaSaldo(valor);
         validaLimite(valor);
-        Conta c = db.readOne(this.getNumero());
+        Conta c = dbConta.readOne(this.getNumero());
         c.saldo -= valor;
-        db.update(c);
+        dbConta.update(c);
     }
 
     public void deposito(double valor)
             throws ValorInvalidoException {
         validaValor(valor);
-        Conta c = db.readOne(this.getNumero());
+        Conta c = dbConta.readOne(this.getNumero());
         c.saldo += valor;
-        db.update(c);
+        dbConta.update(c);
     }
 
     public void transferencia(double valor, Conta conta)
@@ -55,10 +56,10 @@ public class Conta {
             ValorInvalidoException, SaldoInsuficienteException,
             LimiteInsuficienteException {
         validaConta(conta);
-        Conta contaPropria = db.readOne(this.getNumero());
+        Conta contaPropria = dbConta.readOne(this.getNumero());
         contaPropria.saque(valor);
         conta.deposito(valor);
-        db.createHistorico(this.getNumero(), conta.getNumero(), valor);
+        dbContaHistorico.create(this.getNumero(), conta.getNumero(), valor);
     }
 
     private void validaValor(double valor) throws ValorInvalidoException {
@@ -68,13 +69,13 @@ public class Conta {
     }
 
     private void validaSaldo(double valor) throws SaldoInsuficienteException {
-        if (db.readOne(this.numero).getSaldo() < valor) {
+        if (dbConta.readOne(this.numero).getSaldo() < valor) {
             throw new SaldoInsuficienteException();
         }
     }
 
     private void validaLimite(double valor) throws LimiteInsuficienteException {
-        if (db.readOne(this.numero).getLimite() < valor) {
+        if (dbConta.readOne(this.numero).getLimite() < valor) {
             throw new LimiteInsuficienteException();
         }
     }
@@ -85,7 +86,7 @@ public class Conta {
     }
 
     private void validaContaNula(Conta conta) throws ContaInexistenteException {
-        if (db.readOne(conta.getNumero()) == null) {
+        if (dbConta.readOne(conta.getNumero()) == null) {
             throw new ContaInexistenteException();
         }
     }
