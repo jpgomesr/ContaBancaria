@@ -1,10 +1,13 @@
 import Exceptions.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Executavel {
     private static final Scanner sc = new Scanner(System.in);
-    private static final CRUDConta db = new CRUDConta();
+    private static final CRUDConta dbConta = new CRUDConta();
+    private static final CRUDHistorico dbHistorico = new CRUDHistorico();
+    private static final CRUDCliente dbCliente = new CRUDCliente();
 
     public static void main(String[] args) {
         do {
@@ -22,13 +25,12 @@ public class Executavel {
         System.out.print("Número da Conta: ");
         int numero = sc.nextInt();
         try {
-            db.readOne(numero);
+            dbConta.readOne(numero);
         } catch (ContaInexistenteException e) {
-            System.out.print("Titular: ");
-            String titular = sc.next();
+            Cliente titular = buscaCliente();
             System.out.print("Limite: ");
             double limite = sc.nextDouble();
-            db.create(new Conta(numero, titular, limite));
+            dbConta.create(new Conta(numero, titular, limite));
             return;
         }
         throw new ContaJaCadastradaException();
@@ -36,25 +38,30 @@ public class Executavel {
 
     private static void removeConta() {
         Conta conta = buscaConta();
-        db.delete(conta.getNumero());
+        dbConta.delete(conta.getNumero());
     }
 
     private static void editaConta() {
         Conta conta = buscaConta();
-        System.out.print("Titular: ");
-        String titular = sc.next();
-        System.out.print("Limite: ");
-        double limite = sc.nextDouble();
+        Cliente titular = buscaCliente();
         conta.setTitular(titular);
-        conta.setLimite(limite);
-        db.update(conta);
+        System.out.print("Limite: ");
+        conta.setLimite(sc.nextDouble());
+        dbConta.update(conta);
     }
 
     private static Conta buscaConta() {
-        System.out.println(db.readAll());
+        System.out.println(dbConta.readAll());
         System.out.print("Numero da Conta: ");
         int numero = sc.nextInt();
-        return db.readOne(numero);
+        return dbConta.readOne(numero);
+    }
+
+    private static Cliente buscaCliente() {
+        System.out.println(dbCliente.readAll());
+        System.out.print("Id do cliente: ");
+        int numero = sc.nextInt();
+        return dbCliente.readOne(numero);
     }
 
     private static void mostrarOpcoesMenu() {
@@ -78,8 +85,9 @@ public class Executavel {
                 1 - Depósito
                 2 - Saque
                 3 - Transferência
-                4 - Saldo
-                5 - Voltar
+                4 - Listar Transferências
+                5 - Saldo
+                6 - Voltar
                 
                 >\t""");
     }
@@ -96,7 +104,7 @@ public class Executavel {
                 removeConta();
                 break;
             case 4:
-                System.out.println(db.readAll());
+                System.out.println(dbConta.readAll());
                 break;
             case 5:
                 int opcaoConta = 0;
@@ -115,7 +123,7 @@ public class Executavel {
                             break;
                         }
                     } while (true);
-                } while (opcaoConta != 5);
+                } while (opcaoConta != 6);
                 break;
             case 6:
                 System.out.println("Até mais!");
@@ -136,21 +144,32 @@ public class Executavel {
         switch (opcao) {
             case 1: {
                 conta.deposito(solicitarValor());
+                dbConta.update(conta);
                 break;
             }
             case 2: {
                 conta.saque(solicitarValor());
+                dbConta.update(conta);
                 break;
             }
             case 3: {
-                conta.transferencia(solicitarValor(), buscaConta());
+                Conta contaBeneficiario = buscaConta();
+                double valor = solicitarValor();
+                conta.transferencia(valor, contaBeneficiario);
+                dbConta.update(conta);
+                dbConta.update(contaBeneficiario);
+                dbHistorico.create(conta.getNumero(), contaBeneficiario.getNumero(), valor);
                 break;
             }
             case 4: {
-                System.out.println("Saldo: R$ " + db.readOne(conta.getNumero()).getSaldo());
+                System.out.println(dbHistorico.readAll(conta));
                 break;
             }
             case 5: {
+                System.out.println("Saldo: R$ " + dbConta.readOne(conta.getNumero()).getSaldo());
+                break;
+            }
+            case 6: {
                 System.out.println("Até mais!");
                 break;
             }

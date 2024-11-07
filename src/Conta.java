@@ -2,18 +2,16 @@ import Exceptions.*;
 
 public class Conta {
     private int numero;
-    private String titular;
+    private Cliente titular;
     private double saldo;
     private double limite;
-    private CRUDConta dbConta = new CRUDConta();
-    private CRUDHistorico dbContaHistorico = new CRUDHistorico();
 
-    public Conta(int numero, String titular, double saldo, double limite) {
+    public Conta(int numero, Cliente titular, double saldo, double limite) {
         this(numero, titular, limite);
         this.saldo = saldo;
     }
 
-    public Conta(int numero, String titular, double limite) {
+    public Conta(int numero, Cliente titular, double limite) {
         this.numero = numero;
         this.titular = titular;
         this.limite = limite;
@@ -24,7 +22,7 @@ public class Conta {
         return saldo;
     }
 
-    public String getTitular() {
+    public Cliente getTitular() {
         return titular;
     }
 
@@ -38,17 +36,13 @@ public class Conta {
         validaValor(valor);
         validaSaldo(valor);
         validaLimite(valor);
-        Conta c = dbConta.readOne(this.getNumero());
-        c.saldo -= valor;
-        dbConta.update(c);
+        this.saldo -= valor;
     }
 
     public void deposito(double valor)
             throws ValorInvalidoException {
         validaValor(valor);
-        Conta c = dbConta.readOne(this.getNumero());
-        c.saldo += valor;
-        dbConta.update(c);
+        this.saldo += valor;
     }
 
     public void transferencia(double valor, Conta conta)
@@ -56,10 +50,8 @@ public class Conta {
             ValorInvalidoException, SaldoInsuficienteException,
             LimiteInsuficienteException {
         validaConta(conta);
-        Conta contaPropria = dbConta.readOne(this.getNumero());
-        contaPropria.saque(valor);
+        this.saque(valor);
         conta.deposito(valor);
-        dbContaHistorico.create(this.getNumero(), conta.getNumero(), valor);
     }
 
     private void validaValor(double valor) throws ValorInvalidoException {
@@ -69,13 +61,13 @@ public class Conta {
     }
 
     private void validaSaldo(double valor) throws SaldoInsuficienteException {
-        if (dbConta.readOne(this.numero).getSaldo() < valor) {
+        if (this.getSaldo() < valor) {
             throw new SaldoInsuficienteException();
         }
     }
 
     private void validaLimite(double valor) throws LimiteInsuficienteException {
-        if (dbConta.readOne(this.numero).getLimite() < valor) {
+        if (this.getLimite() < valor) {
             throw new LimiteInsuficienteException();
         }
     }
@@ -86,7 +78,7 @@ public class Conta {
     }
 
     private void validaContaNula(Conta conta) throws ContaInexistenteException {
-        if (dbConta.readOne(conta.getNumero()) == null) {
+        if (conta == null) {
             throw new ContaInexistenteException();
         }
     }
@@ -101,7 +93,7 @@ public class Conta {
         return this.numero;
     }
 
-    public void setTitular(String titular) {
+    public void setTitular(Cliente titular) {
         this.titular = titular;
     }
 

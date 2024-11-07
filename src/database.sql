@@ -2,11 +2,18 @@ create database db_sistema_bancario;
 
 use db_sistema_bancario;
 
+create table tb_cliente (
+    id int not null primary key,
+    nome varchar(150),
+    cpf char(11)
+);
+
 create table tb_conta(
 	numero int not null primary key,
-    titular varchar(150) not null,
+    id_cliente int not null unique,
     saldo double not null,
-    limite double not null
+    limite double not null,
+    foreign key (id_cliente) references tb_cliente(id)
 );
 
 create table tb_historico(
