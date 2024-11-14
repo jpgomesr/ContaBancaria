@@ -1,5 +1,6 @@
 import Exceptions.*;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,9 +11,6 @@ public class Executavel {
     private static final CRUDCliente dbCliente = new CRUDCliente();
 
     public static void main(String[] args) {
-        dbCliente.create(new Cliente("joão", "88899933322"));
-        dbCliente.readAll();
-
         do {
             mostrarOpcoesMenu();
             int opcaoMenu = sc.nextInt();
@@ -37,6 +35,21 @@ public class Executavel {
             return;
         }
         throw new ContaJaCadastradaException();
+    }
+
+    public static void cadastroCliente() {
+        System.out.print("Nome: ");
+        String nome = sc.next();
+        do {
+            System.out.println("CPF (apenas números): ");
+            String cpf = sc.next();
+            try {
+                dbCliente.create(new Cliente(nome, cpf));
+                break;
+            } catch (CpfDuplicadoException e) {
+                System.err.println(e.getMessage());
+            }
+        } while (true);
     }
 
     private static void removeConta() {
@@ -74,7 +87,7 @@ public class Executavel {
                 1 - Cadastro
                 2 - Editar
                 3 - Deletar
-                4 - Mostrar Todas
+                4 - Mostrar Todos(as)
                 5 - Selecionar
                 6 - Sair
                 
@@ -95,19 +108,108 @@ public class Executavel {
                 >\t""");
     }
 
+    public static void mostrarOpcoesCadastro() {
+        System.out.print("""
+                Cadastro
+                
+                1 - Cliente
+                2 - Conta
+                3 - Voltar
+                
+                >\t""");
+    }
+
+    public static void mostrarOpcoesListar() {
+        System.out.print("""
+                Listar
+                
+                1 - Cliente
+                2 - Conta
+                3 - Voltar
+                
+                >\t""");
+    }
+
+    public static void mostrarOpcoesDelete() {
+        System.out.print("""
+                Deletar
+                
+                1 - Cliente
+                2 - Conta
+                3 - Voltar
+                
+                >\t""");
+    }
+
+    public static void executarOpcaoDelete(int opcao) {
+        switch (opcao) {
+            case 1:
+                dbCliente.readAll();
+                dbCliente.delete(sc.nextInt());
+                break;
+            case 2:
+                dbConta.readAll();
+                dbConta.delete(sc.nextInt());
+                break;
+            case 3:
+                System.out.println("Até mais!");
+                break;
+            default:
+                System.out.println("Opção inválida!");
+                break;
+        }
+    }
+
+    public static void executarOpcaoListar(int opcao) {
+        switch (opcao) {
+            case 1:
+                System.out.println(dbCliente.readAll());
+                break;
+            case 2:
+                System.out.println(dbConta.readAll());
+                break;
+            case 3:
+                System.out.println("Até mais!");
+                break;
+            default:
+                System.out.println("Opção inválida!");
+                break;
+        }
+    }
+
+    public static void executarOpcoesCadastro(int opcao) {
+        switch (opcao) {
+            case 1:
+                cadastroCliente();
+                break;
+            case 2:
+                cadastroConta();
+                break;
+            case 3:
+                System.out.println("Até mais!");
+                break;
+            default:
+                System.out.println("Opção inválida!");
+                break;
+        }
+    }
+
     private static void executarOpcaoMenu(int opcao) {
         switch (opcao) {
             case 1:
-                cadastroConta();
+                mostrarOpcoesCadastro();
+                executarOpcoesCadastro(sc.nextInt());
                 break;
             case 2:
                 editaConta();
                 break;
             case 3:
-                removeConta();
+                mostrarOpcoesDelete();
+                executarOpcaoDelete(sc.nextInt());
                 break;
             case 4:
-                System.out.println(dbConta.readAll());
+                mostrarOpcoesListar();
+                executarOpcaoListar(sc.nextInt());
                 break;
             case 5:
                 int opcaoConta = 0;

@@ -3,9 +3,9 @@ create database db_sistema_bancario;
 use db_sistema_bancario;
 
 create table tb_cliente (
-    id int not null primary key auto_increment,
+    id int not null primary key auto_increment, # não precisa ser unique pq é primary key e auto_increment
     nome varchar(150),
-    cpf char(11) not null unique
+    cpf char(11) not null unique # cpf unico
 );
 
 create table tb_conta(

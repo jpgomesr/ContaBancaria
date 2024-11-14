@@ -17,7 +17,6 @@ public class CRUDCliente {
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
                 String cpf = rs.getString("cpf");
-                int idConta = rs.getInt("id_conta");
                 clientes.add(new Cliente(id, nome, cpf));
             }
         } catch (SQLException e) {
@@ -62,7 +61,7 @@ public class CRUDCliente {
 
     public void delete(int id) {
         try (Connection con = db.getConnection()) {
-            PreparedStatement ps = con.prepareStatement("DELETE FROM tb_cliente WHERE numero = ?");
+            PreparedStatement ps = con.prepareStatement("DELETE FROM tb_cliente WHERE id = ?");
             ps.setInt(1, id);
             ps.execute();
         } catch (SQLException e) {
