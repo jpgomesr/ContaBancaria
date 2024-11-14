@@ -10,6 +10,9 @@ public class Executavel {
     private static final CRUDCliente dbCliente = new CRUDCliente();
 
     public static void main(String[] args) {
+        dbCliente.create(new Cliente("joão", "88899933322"));
+        dbCliente.readAll();
+
         do {
             mostrarOpcoesMenu();
             int opcaoMenu = sc.nextInt();

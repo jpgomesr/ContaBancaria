@@ -7,9 +7,13 @@ public class Cliente {
 
     public Cliente() {}
 
-    public Cliente(int id, Conta conta, String nome, String cpf) {
+    public Cliente(int id, String nome, String cpf) {
         this.id = id;
-        this.conta = conta;
+        this.nome = nome;
+        this.cpf = cpf;
+    }
+
+    public Cliente(String nome, String cpf) {
         this.nome = nome;
         this.cpf = cpf;
     }
@@ -20,6 +24,10 @@ public class Cliente {
                 "\nNome: " + nome +
                 "\nCPF: " + cpf +
                 "\n";
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
